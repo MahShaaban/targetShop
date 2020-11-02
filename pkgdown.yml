@@ -1,0 +1,12 @@
+pandoc: 2.7.3
+pkgdown: 1.6.1
+pkgdown_sha: ~
+articles:
+  workshop_code: workshop_code.html
+  workshop_quiz: workshop_quiz.html
+  workshop_syllabus: workshop_syllabus.html
+last_built: 2020-11-02T03:06Z
+urls:
+  reference: https://MahShaaban.github.io/targetShop/reference
+  article: https://MahShaaban.github.io/targetShop/articles
+

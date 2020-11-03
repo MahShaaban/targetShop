@@ -118,6 +118,6 @@ functions
 
 The workshop is divided into two parts
 
-- Code walk through: [an early draft](vingette/workshop_code.Rmd)
-- Quize: [quiz_code](vignette/quiz_code.Rmd)
+- Code walk through: [an early draft](vignettes/workshop_code.Rmd)
+- Quize: [quiz_code](vignettes/workshop_quiz.Rmd)
 - This workshop is based on a workflow article: [a draft](https://github.com/MahShaaban/targetFlow)

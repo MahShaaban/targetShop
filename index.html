@@ -110,6 +110,19 @@
 <div id="targetshop" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#targetshop" class="anchor"></a>targetShop</h1></div>
+<p>This repo contains the materials for a workshop on “<strong>Integration of ChIP-seq and RNA-seq data in R</strong>” in the format of <a href="https://github.com/seandavi/BuildABiocWorkshop2020">Bioconductor workshops</a>.</p>
+<p>The materials in the <code>vignettes/</code> direcory divided into three parts:</p>
+<ul>
+<li><code>vignettes/workshop_syllabus.Rmd</code></li>
+<li><code>vignettes/workshop_code.Rmd</code></li>
+<li><code>vignettes/workshop_quiz.Rmd</code></li>
+</ul>
+<p>The contents of these vignettes are reproduced as <strong>Articles</strong> in a <code>pkgdown</code> <a href="https://mahshaaban.github.io/targetShop/">website</a></p>
+<p>To run the materials locally, use the docker image <a href="https://hub.docker.com/repository/docker/mahshaaban/targetshop/general">mahshaaban/targetshop</a> and knit the Rmd files from within R studio.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1"></a><span class="ex">docker</span> pull mahshaaban/targetshop:latest</span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="ex">docker</span> run -e PASSWORD=<span class="op">&lt;</span>a_password<span class="op">&gt;</span> -p 8787:8787 mahshaaban/targetshop:latest</span></code></pre></div>
+<p>An Rstudio session will be accessable at <a href="https://localhost:8787/">https://localhost:8787/</a> in the browser. The login username is always <code>rstudio</code> and the password is <code>&lt;a_password&gt;</code>.</p>
+<p>Alternatively, use an <a href="https://rstudio.cloud/">Rstudio cloud</a> to creat a <code>New Project from Git Repository</code> of this link <a href="https://github.com/MahShaaban/targetShop">https://github.com/MahShaaban/targetShop</a>. Note, to be able to knit the Rmd documents, the required packages would need to be installed manually.</p>
 </div>
   </div>
 

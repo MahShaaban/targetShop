@@ -24,10 +24,14 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 
 ```{r load_libraries}
 # load required libraries
-library(dplyr)
+## CRAN packages
+library(dplyr) 
 library(tidyr)
 library(readr)
 library(purrr)
+
+## Bioc packages
+
 library(GenomicRanges)
 library(Biostrings)
 library(rtracklayer)
@@ -43,7 +47,7 @@ YY1 and YY2 belongs to the same family of transcription factors. YY1 is a zinc
 finger protein which direct deacetylase and histone acetyltransferases of the 
 promoters of many genes. The results of the binding of YY1 to the regulatory 
 regions of genes is the induction or repression of their expression. YY2 is a 
-parloge of YY1. Similarly, it is a zinc finger protein with both activation or 
+paralog of YY1. Similarly, it is a zinc finger protein with both activation or 
 repression functions on its targets. Using the target analysis, we will attempt 
 to answer the following questions. Do the two transcription factors share the 
 same target genes? What are the consequences of the binding of each factor on 
@@ -55,7 +59,7 @@ binding and gene expression under the transcription factors perturbations (Table
 \@ref(tab:datasets)). This dataset was obtained in the form of differential 
 expression between the two conditions from 
 [KnockTF](http://www.licpathway.net/KnockTF/index.html). The first dataset is 
-geneexpression profiling using microarrays of YY1/YY2 knockdown and control HeLa
+gene expression profiling using microarrays of YY1/YY2 knockdown and control HeLa
 cells. The binding sites of the factors in HeLa cells were determined using two 
 ChIP-Seq datasets. The ChIP peaks were obtained in the form of bed files from 
 [ChIP-Atlas](https://chip-atlas.org). Finally, we used the USSC hg19 human 
@@ -77,6 +81,8 @@ cooperatively regulated targets.
 
 ```{r download,include=FALSE}
 if(!file.exists('data.zip')) {
+  # increase this value if your internet exceptionally slow.
+  options(timeout = 200)
   # download the manuscript data
   download.file(
     'https://ndownloader.figshare.com/articles/10918463/versions/1',
@@ -85,6 +91,12 @@ if(!file.exists('data.zip')) {
   
   # decompress file
   unzip('data.zip', exdir = 'data')
+  
+  # remove the zip
+  file.remove("data.zip")
+
+  # check the directory
+  if (dir.exists("data")){ print("The Data Extracted Successfully!")}
 }
 ```
 
@@ -103,6 +115,15 @@ peak_files <- c(YY1 = 'data/Oth.Utr.05.YY1.AllCell.bed',
 
 # load the peaks bed files as GRanges
 peaks <- map(peak_files, ~GRanges(import.bed(.x)))
+
+#summarize YY1
+summary(peaks$YY1)
+head(peaks$YY1)
+
+#summarize YY2
+summary(peaks$YY2)
+head(peaks$YY2)
+
 ```
 
 ## Preparing the expression data
@@ -124,6 +145,14 @@ express <- map(expression_files,
                  setNames(c('tf', 'gene', 'fc', 'pvalue')) %>%
                  filter(tf %in% c('YY1', 'YY2')) %>%
                  na.omit())
+# Summarize YY1
+str(express$YY1)
+summary(express$YY1)
+
+#Summarize YY2
+str(express$YY2)
+summary(express$YY2)
+
 ```
 
 The knockdown of either factor in HeLa cells seem to change the expression of 
@@ -162,7 +191,6 @@ title('(C)')
 ```
 
 ## Preparing genome annotation
-
 The gene information in `express` is recorded using the gene SYMBOLS. They need 
 to be mapped to the ENTREZIDS before extracting the genomic coordinates. To do 
 that, we use the `org.Hs.eg.db` to map between the identifiers. Next, we use the
@@ -177,11 +205,15 @@ symbol_entrez <- AnnotationDbi::select(org.Hs.eg.db,
                         'ENTREZID', 'SYMBOL') %>%
   setNames(c('gene', 'gene_id'))
 
+
+head(symbol_entrez)
 # format genome to join with express
 genome <- promoters(TxDb.Hsapiens.UCSC.hg19.knownGene,
             upstream = 100000,
             columns = c('tx_id', 'tx_name', 'gene_id')) %>%
   as_tibble() %>% mutate(gene_id = as.character(gene_id))
+
+str(genome)
 ```
 
 The resulting object, `genome`, from the previous step is a `tibble` that shares
@@ -195,6 +227,12 @@ regions <- map(express,
                ~inner_join(genome, symbol_entrez) %>%
                  inner_join(.x) %>%
                  makeGRangesFromDataFrame(keep.extra.columns = TRUE))
+
+head(regions$YY1)
+summary(regions$YY1)
+
+summary(regions$YY2)
+head(regions$YY2)
 ```
 
 ## Predicting gene targets of individual factors
@@ -214,12 +252,23 @@ ap <- map2(peaks, regions,
            ~associated_peaks(peaks=.x,
                              regions = .y,
                              regions_col = 'tx_id'))
+summary(ap$YY1)
+head(ap$YY1)
+
+summary(ap$YY2)
+head(ap$YY2)
 # get direct targets
 dt <- map2(peaks, regions,
            ~direct_targets(peaks=.x,
                            regions = .y,
                            regions_col = 'tx_id',
                            stats_col = 'fc'))
+
+summary(dt$YY1)
+head(dt$YY1)
+
+summary(dt$YY2)
+head(dt$YY2)
 ```
 
 To determine the dominant function of a factor, we divide the targets by the 
@@ -305,6 +354,9 @@ are the main inputs for the analysis functions.
 # merge and name peaks
 common_peaks <- GenomicRanges::reduce(subsetByOverlaps(peaks$YY1, peaks$YY2))
 common_peaks$name <- paste0('common_peak_', 1:length(common_peaks))
+
+summary(common_peaks)
+head(common_peaks)
 ```
 
 ```{r reshape_express}
@@ -314,10 +366,14 @@ both_express <- bind_rows(express) %>%
   spread(tf, values_col) %>%
   unnest(YY1, YY2, names_sep = '_')
 
+str(both_express)
 # make regions using genome and expression data of both factors
 both_regions <- inner_join(genome, symbol_entrez) %>%
   inner_join(both_express) %>%
   makeGRangesFromDataFrame(keep.extra.columns = TRUE)
+
+summary(both_regions)
+head(both_regions)
 ```
 
 ```{r targer_common}
@@ -325,13 +381,18 @@ both_regions <- inner_join(genome, symbol_entrez) %>%
 common_ap <- associated_peaks(peaks = common_peaks,
                               regions = both_regions,
                               regions_col = 'tx_id')
+summary(common_ap)
+head(common_ap)
 
 # get direct targets of both factors
 common_dt <- direct_targets(peaks = common_peaks,
                             regions = both_regions,
                             regions_col = 'tx_id',
                             stats_col = c('YY1_fc', 'YY2_fc'))
+summary(common_ap)
+head(common_ap)
 ```
+
 
 The output of `associated_peaks` is the same as before. `direct_targets` is the 
 same but the `stat` and the `stat_rank` carry the product of the two statistics 

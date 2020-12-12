@@ -77,13 +77,10 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="articles/workshop_code.html">Integration of ChIP-seq and RNA-seq data in R</a>
+      <a href="articles/workshop_code.html">Code Walkthrough: A use case of YY1 and YY2 in HeLa cells</a>
     </li>
     <li>
-      <a href="articles/workshop_quiz.html">Quiz: Integration of ChIP-seq and RNA-seq data in R</a>
-    </li>
-    <li>
-      <a href="articles/workshop_syllabus.html">Syllabus: Integration of ChIP-seq and RNA-seq data in R</a>
+      <a href="articles/workshop_introduction.html">Introduction: Introduction to target package</a>
     </li>
   </ul>
 </li>
@@ -107,23 +104,124 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
-<div id="targetshop" class="section level1">
+
+<p><img src="https://github.com/MahShaaban/targetShop/workflows/.github/workflows/basic_checks.yaml/badge.svg" alt=".github/workflows/basic_checks.yaml"></p>
+<div id="integrating-chip-seq-and-rna-seq-data-in-r" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
-<a href="#targetshop" class="anchor"></a>targetShop</h1></div>
-<p>This repo contains the materials for a workshop on “<strong>Integration of ChIP-seq and RNA-seq data in R</strong>” in the format of <a href="https://github.com/seandavi/BuildABiocWorkshop2020">Bioconductor workshops</a>.</p>
-<p>The materials in the <code>vignettes/</code> direcory divided into three parts:</p>
+<a href="#integrating-chip-seq-and-rna-seq-data-in-r" class="anchor"></a>Integrating ChIP-seq and RNA-seq data in R</h1></div>
+<div id="description" class="section level2">
+<h2 class="hasAnchor">
+<a href="#description" class="anchor"></a>Description</h2>
+<p>Researchers use ChIP binding data to identify potential transcription factor binding sites. They use gene expression data from sequencing or microarrays to quantify the effect of the factor over-expression or knockdown on its targets. The integration of the binding and expression data therefore can be used to improve the understanding of a transcription factor function. In this workshop, we present a complete workflow for integrating the gene expression (RNA-seq) and DNA-binding data (ChIP-seq) to predict the combined function of two transcription factors using R/Bioconductor. The example we will be using in the workshop is from real datasets of two functionally and evolutionary related transcription factors YY1 and YY2 in HeLa cells. We will try to identify the factor-specific and the shared targets of the factors in this particular cell line. Then we will use a technique find out the aggregate functions of the factors on their individual (inducer or repressor) and common targets (cooperative or competitive). The first half of the workshop would be dedicated to introduce the target package followed by walk through the workflow interactively in a live demo in the second half.</p>
+</div>
+<div id="pre-requisites" class="section level2">
+<h2 class="hasAnchor">
+<a href="#pre-requisites" class="anchor"></a>Pre-requisites</h2>
 <ul>
-<li><code>vignettes/workshop_syllabus.Rmd</code></li>
-<li><code>vignettes/workshop_code.Rmd</code></li>
-<li><code>vignettes/workshop_quiz.Rmd</code></li>
+<li>Basic knowledge of <em>R</em> syntax</li>
+<li>Familiarity with the <code>GenomicRanges</code> class</li>
+<li>Readings: <a href="https://pubmed.ncbi.nlm.nih.gov/21940749/">Tang et al., 2011</a>, <a href="https://pubmed.ncbi.nlm.nih.gov/24263090/">Wang et al., 2013</a>, and <a href="https://pubmed.ncbi.nlm.nih.gov/32894066/">Ahmed et al., 2020</a>
+</li>
 </ul>
-<p>The contents of these vignettes are reproduced as <strong>Articles</strong> in a <code>pkgdown</code> <a href="https://mahshaaban.github.io/targetShop/">website</a></p>
-<p>To run the materials locally, use the docker image <a href="https://hub.docker.com/repository/docker/mahshaaban/targetshop/general">mahshaaban/targetshop</a> and knit the Rmd files from within R studio.</p>
+</div>
+<div id="participation" class="section level2">
+<h2 class="hasAnchor">
+<a href="#participation" class="anchor"></a>Participation</h2>
+<p>Participants are expected to walk through the code (rmarkdown document). A brief introduction will be given at the beginning to introduce the package and discussion will be at the end.</p>
+<p>To run the materials locally, use the docker image <a href="https://hub.docker.com/repository/docker/mahshaaban/targetshop/">mahshaaban/targetshop</a> and knit the <code>Rmd</code> files from within Rstudio.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1"></a><span class="ex">docker</span> pull mahshaaban/targetshop:latest</span>
 <span id="cb1-2"><a href="#cb1-2"></a><span class="ex">docker</span> run -e PASSWORD=<span class="op">&lt;</span>a_password<span class="op">&gt;</span> -p 8787:8787 mahshaaban/targetshop:latest</span></code></pre></div>
 <p>An Rstudio session will be accessable at <a href="https://localhost:8787/">https://localhost:8787/</a> in the browser. The login username is always <code>rstudio</code> and the password is <code>&lt;a_password&gt;</code>.</p>
-<p>Alternatively, use an <a href="https://rstudio.cloud/">Rstudio cloud</a> to creat a <code>New Project from Git Repository</code> of this link <a href="https://github.com/MahShaaban/targetShop">https://github.com/MahShaaban/targetShop</a>. Note, to be able to knit the Rmd documents, the required packages would need to be installed manually.</p>
 </div>
+<div id="r--bioconductor-packages-used" class="section level2">
+<h2 class="hasAnchor">
+<a href="#r--bioconductor-packages-used" class="anchor"></a><em>R</em> / <em>Bioconductor</em> packages used</h2>
+<ul>
+<li>target</li>
+</ul>
+<p>Data management</p>
+<ul>
+<li>GenomicRanges</li>
+<li>Biostrings</li>
+<li>rtracklayer</li>
+<li>AnnotationDbi</li>
+<li>readr</li>
+<li>dplyr</li>
+<li>tidyr</li>
+<li>purrr</li>
+</ul>
+<p>Annotation packages</p>
+<ul>
+<li>TxDb.Hsapiens.UCSC.hg19.knownGene</li>
+<li>org.Hs.eg.db</li>
+</ul>
+</div>
+<div id="time-outline" class="section level2">
+<h2 class="hasAnchor">
+<a href="#time-outline" class="anchor"></a>Time outline</h2>
+<table class="table">
+<thead><tr class="header">
+<th>Activity</th>
+<th>Time</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>Introduction to <code>target</code> package</td>
+<td>10m</td>
+</tr>
+<tr class="even">
+<td>Walk through the code</td>
+<td>20m</td>
+</tr>
+<tr class="odd">
+<td>Open discussion</td>
+<td>10m</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="workshop-goals-and-objectives" class="section level2">
+<h2 class="hasAnchor">
+<a href="#workshop-goals-and-objectives" class="anchor"></a>Workshop goals and objectives</h2>
+<p>The workshop aims to teach participants how to use R/Bioconductor packages to read in differential expression and binding peaks data, apply functions predictive analysis and explore its output. We hope that by providing a complete realistic example, participants would develop an understanding of the issues and the importance of integrating those two types of data. Ideally, participants would be able to adapt this knowledge and the workflow to apply this kind of analysis to their own datasets.</p>
+</div>
+<div id="learning-goals" class="section level2">
+<h2 class="hasAnchor">
+<a href="#learning-goals" class="anchor"></a>Learning goals</h2>
+<ul>
+<li>Learn to read differential expression and binding peaks data into the appropriate R objects</li>
+<li>Learn to use Bioconductor annotation packages to extract the genomic coordinates to match peaks to genes</li>
+<li>Learn to prepare the expression and binding data for <code>target</code> analysis</li>
+<li>Understand the <code>target</code> output through the package visualization and testing tools</li>
+</ul>
+</div>
+<div id="learning-objectives" class="section level2">
+<h2 class="hasAnchor">
+<a href="#learning-objectives" class="anchor"></a>Learning objectives</h2>
+<ul>
+<li>Read data into R <code>data.frame</code>s and Bioconductor <code>GRanges</code> objects</li>
+<li>Extract information from Bioconductor annotation packages TxDb and org.db</li>
+<li>Apply the <code>target</code> analysis using <code>associated_peaks</code> and <code>direct_targets</code> functions</li>
+<li>Visualize the output using the cumulative distribution functions through <code>plot_predicitons</code>
+</li>
+<li>Test the results using KS test through <code>test_predicitons</code>
+</li>
+</ul>
+</div>
+</div>
+<div id="workshop--next" class="section level1">
+<h1 class="hasAnchor">
+<a href="#workshop--next" class="anchor"></a>Workshop (–&gt; Next)</h1>
+<p>The workshop is divided into two parts</p>
+<ul>
+<li>Introduction: <a href="https://mahshaaban.github.io/targetShop/articles/workshop_introduction.html">workshop_introduction</a>
+</li>
+<li>Code walkthrough: <a href="https://mahshaaban.github.io/targetShop/articles/workshop_code.html">workshop_code</a>
+</li>
+</ul>
+<p>This workshop is based on a workflow article: <a href="https://github.com/MahShaaban/targetFlow">a draft</a></p>
+</div>
+
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

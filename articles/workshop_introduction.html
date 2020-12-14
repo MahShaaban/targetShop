@@ -93,7 +93,7 @@
                         <h4 class="author">Mahmoud Ahmed<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>
 </h4>
             
-            <h4 class="date">2020-12-12</h4>
+            <h4 class="date">2020-12-14</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/MahShaaban/targetShop/blob/master/vignettes/workshop_introduction.Rmd"><code>vignettes/workshop_introduction.Rmd</code></a></small>
       <div class="hidden name"><code>workshop_introduction.Rmd</code></div>
@@ -117,7 +117,7 @@
 <div id="modeling-the-binding-sites-as-the-discounted-distances-of-the-chip-peaks" class="section level2">
 <h2 class="hasAnchor">
 <a href="#modeling-the-binding-sites-as-the-discounted-distances-of-the-chip-peaks" class="anchor"></a>Modeling the binding sites as the discounted distances of the ChIP peaks</h2>
-<p>Peak Score (<span class="math inline">\(S_p\)</span>): is the distance (<span class="math inline">\(\Delta\)</span>) from transcription start site (TSS) relative to a 100 kb <span class="citation">Wang et al. (2013)</span></p>
+<p>Peak Score (<span class="math inline">\(S_p\)</span>): is the distance (<span class="math inline">\(\Delta\)</span>) from transcription start site (TSS) relative to a 100 kb <span class="citation">Wang et al. (2013)</span>.</p>
 <p><span class="math display">\[
 S_p = e^{-(0.5+4\Delta)}
 \]</span></p>
@@ -130,12 +130,10 @@ S_p = e^{-(0.5+4\Delta)}
 <span class="va">decay_func</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span><span class="op">(</span><span class="op">-</span><span class="op">(</span><span class="fl">0.5</span> <span class="op">+</span> <span class="op">(</span><span class="fl">4</span> <span class="op">*</span> <span class="va">x</span><span class="op">/</span><span class="fl">100</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
 
 <span class="co"># plot decay over distances</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">d</span>,
-     <span class="fu">decay_func</span><span class="op">(</span><span class="va">d</span><span class="op">)</span>,
-     pch <span class="op">=</span> <span class="fl">19</span>,
-     xlab <span class="op">=</span> <span class="st">'d = 1:100'</span>,
-     ylab <span class="op">=</span> <span class="st">'exp(-(0.5 + 4 * d/100))'</span><span class="op">)</span></code></pre></div>
-<p><img src="workshop_introduction_files/figure-html/decay_function-1.png" width="700"></p>
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">d</span>, <span class="fu">decay_func</span><span class="op">(</span><span class="va">d</span><span class="op">)</span>,
+     pch <span class="op">=</span> <span class="fl">19</span>, 
+     xlab <span class="op">=</span> <span class="st">'d = 1:100'</span>, ylab <span class="op">=</span> <span class="st">'exp(-(0.5 + 4 * d/100))'</span><span class="op">)</span></code></pre></div>
+<p><img src="workshop_introduction_files/figure-html/decay_function-1.png" width="480" style="display: block; margin: auto;"></p>
 </div>
 <div id="modeling-the-regulatory-potential-as-the-sum-of-the-weighted-peaks" class="section level2">
 <h2 class="hasAnchor">
@@ -158,12 +156,10 @@ S_p = e^{-(0.5+4\Delta)}
 <span class="va">s</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/aggregate.html">aggregate</a></span><span class="op">(</span><span class="va">d</span>, <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="va">g</span><span class="op">)</span>, <span class="va">sum</span><span class="op">)</span><span class="op">$</span><span class="va">x</span>
 
 <span class="co"># plot aggregate distances over the number of instances</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">n</span>,
-     <span class="va">s</span>,
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">n</span>, <span class="va">s</span>,
      pch <span class="op">=</span> <span class="fl">19</span>,
-     xlab <span class="op">=</span> <span class="st">'table(g)'</span>,
-     ylab <span class="op">=</span> <span class="st">'aggregate(d, g, sum)'</span><span class="op">)</span></code></pre></div>
-<p><img src="workshop_introduction_files/figure-html/aggregate_functions-1.png" width="700"></p>
+     xlab <span class="op">=</span> <span class="st">'table(g)'</span>, ylab <span class="op">=</span> <span class="st">'aggregate(d, g, sum)'</span><span class="op">)</span></code></pre></div>
+<p><img src="workshop_introduction_files/figure-html/aggregate_functions-1.png" width="480" style="display: block; margin: auto;"></p>
 </div>
 <div id="integrating-the-factor-binding-and-the-expression-information" class="section level2">
 <h2 class="hasAnchor">
@@ -177,7 +173,7 @@ RP_g = \frac{R_{gb}\times R_{ge}}{n^2}
 <code class="sourceCode R"><span class="co"># define distances</span>
 <span class="va">d</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">:</span><span class="fl">100</span>
 
-<span class="co"># make a random stat variabl</span>
+<span class="co"># make a random stat variable</span>
 <span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">12345</span><span class="op">)</span>
 <span class="va">t</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">200</span>, <span class="fl">0</span>, <span class="fl">5</span><span class="op">)</span>
 
@@ -188,40 +184,27 @@ RP_g = \frac{R_{gb}\times R_{ge}}{n^2}
 <span class="va">pmax</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="va">rp</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">rp</span><span class="op">)</span><span class="op">)</span>
 <span class="va">pmin</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="va">rp</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="va">rp</span><span class="op">)</span><span class="op">)</span>
 
-<span class="co"># plot randam stats over distances</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="va">d</span>, <span class="va">d</span><span class="op">)</span>,
-     <span class="va">t</span>,
-     pch <span class="op">=</span> <span class="fl">19</span>,
-     col <span class="op">=</span> <span class="st">'gray'</span>,
-     xlab <span class="op">=</span> <span class="st">'c(-d, d)'</span>,
-     ylab <span class="op">=</span> <span class="st">'rnorm(200, 0, 5)'</span><span class="op">)</span>
+<span class="co"># plot random stats over distances</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="va">d</span>, <span class="va">d</span><span class="op">)</span>, <span class="va">t</span>,
+     pch <span class="op">=</span> <span class="fl">19</span>, col <span class="op">=</span> <span class="st">'gray'</span>,
+     xlab <span class="op">=</span> <span class="st">'c(-d, d)'</span>, ylab <span class="op">=</span> <span class="st">'rnorm(200, 0, 5)'</span><span class="op">)</span>
 
 <span class="co"># highlight the max rank</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/points.html">points</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="va">d</span>, <span class="va">d</span><span class="op">)</span><span class="op">[</span><span class="va">pmax</span><span class="op">]</span>,
-       <span class="va">t</span><span class="op">[</span><span class="va">pmax</span><span class="op">]</span>,
-       col <span class="op">=</span> <span class="st">'blue'</span>,
-       pch <span class="op">=</span> <span class="fl">19</span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/r/graphics/text.html">text</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="va">d</span>, <span class="va">d</span><span class="op">)</span><span class="op">[</span><span class="va">pmax</span><span class="op">]</span><span class="op">+</span><span class="fl">10</span>,
-       <span class="va">t</span><span class="op">[</span><span class="va">pmax</span><span class="op">]</span> <span class="op">+</span> <span class="fl">1</span>,
-       col <span class="op">=</span> <span class="st">'blue'</span>,
-       labels <span class="op">=</span> <span class="st">'Max'</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/points.html">points</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="va">d</span>, <span class="va">d</span><span class="op">)</span><span class="op">[</span><span class="va">pmax</span><span class="op">]</span>, <span class="va">t</span><span class="op">[</span><span class="va">pmax</span><span class="op">]</span>,
+       col <span class="op">=</span> <span class="st">'blue'</span>, pch <span class="op">=</span> <span class="fl">19</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/text.html">text</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="va">d</span>, <span class="va">d</span><span class="op">)</span><span class="op">[</span><span class="va">pmax</span><span class="op">]</span><span class="op">+</span><span class="fl">10</span>, <span class="va">t</span><span class="op">[</span><span class="va">pmax</span><span class="op">]</span> <span class="op">+</span> <span class="fl">1</span>,
+       col <span class="op">=</span> <span class="st">'blue'</span>, labels <span class="op">=</span> <span class="st">'Max'</span><span class="op">)</span>
 
 <span class="co"># highlight the min rank</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/points.html">points</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="va">d</span>, <span class="va">d</span><span class="op">)</span><span class="op">[</span><span class="va">pmin</span><span class="op">]</span>,
-       <span class="va">t</span><span class="op">[</span><span class="va">pmin</span><span class="op">]</span>,
-       col <span class="op">=</span> <span class="st">'green'</span>,
-       pch <span class="op">=</span> <span class="fl">19</span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/r/graphics/text.html">text</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="va">d</span>, <span class="va">d</span><span class="op">)</span><span class="op">[</span><span class="va">pmin</span><span class="op">]</span> <span class="op">+</span> <span class="fl">10</span>,
-       <span class="va">t</span><span class="op">[</span><span class="va">pmin</span><span class="op">]</span> <span class="op">+</span> <span class="fl">1</span>,
-       col <span class="op">=</span> <span class="st">'green'</span>,
-       label <span class="op">=</span> <span class="st">'Min'</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/points.html">points</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="va">d</span>, <span class="va">d</span><span class="op">)</span><span class="op">[</span><span class="va">pmin</span><span class="op">]</span>, <span class="va">t</span><span class="op">[</span><span class="va">pmin</span><span class="op">]</span>,
+       col <span class="op">=</span> <span class="st">'green'</span>, pch <span class="op">=</span> <span class="fl">19</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/text.html">text</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="va">d</span>, <span class="va">d</span><span class="op">)</span><span class="op">[</span><span class="va">pmin</span><span class="op">]</span> <span class="op">+</span> <span class="fl">10</span>, <span class="va">t</span><span class="op">[</span><span class="va">pmin</span><span class="op">]</span> <span class="op">+</span> <span class="fl">1</span>,
+       col <span class="op">=</span> <span class="st">'green'</span>, label <span class="op">=</span> <span class="st">'Min'</span><span class="op">)</span>
 
 <span class="co"># make quadrant lines</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/abline.html">abline</a></span><span class="op">(</span>h <span class="op">=</span> <span class="fl">0</span>, col <span class="op">=</span> <span class="st">'red'</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/abline.html">abline</a></span><span class="op">(</span>v <span class="op">=</span> <span class="fl">0</span>, col <span class="op">=</span> <span class="st">'red'</span><span class="op">)</span></code></pre></div>
-<p><img src="workshop_introduction_files/figure-html/distance_stat-1.png" width="700"></p>
+<p><img src="workshop_introduction_files/figure-html/distance_stat-1.png" width="480" style="display: block; margin: auto;"></p>
 </div>
 <div id="modeling-the-interaction-of-two-factors-using-independent-perturbations" class="section level2">
 <h2 class="hasAnchor">
@@ -234,18 +217,14 @@ RI_{g} = x_{ge}\times y_{ge}
 RP_g = \frac{R_{gb}\times RI_{ge}}{n^2}
 \]</span></p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># define a second random stat variable</span>
-<span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">321</span><span class="op">)</span>
-<span class="va">t2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">200</span>, <span class="fl">0</span>, <span class="fl">5</span><span class="op">)</span>
+<code class="sourceCode R"><span class="co"># define two random stat variables</span>
+<span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">12345</span><span class="op">)</span>; <span class="va">t</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">200</span>, <span class="fl">0</span>, <span class="fl">5</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">321</span><span class="op">)</span>; <span class="va">t2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">200</span>, <span class="fl">0</span>, <span class="fl">5</span><span class="op">)</span>
 
 <span class="co"># plot the two random stat variables</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">t</span>, <span class="va">t2</span>,
-     ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">10</span>, <span class="fl">10</span><span class="op">)</span>,
-     xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">10</span>, <span class="fl">10</span><span class="op">)</span>,
-     pch <span class="op">=</span> <span class="fl">19</span>,
-     col <span class="op">=</span> <span class="st">'gray'</span>,
-     xlab <span class="op">=</span> <span class="st">'rnorm(200, 0, 5)'</span>,
-     ylab <span class="op">=</span> <span class="st">'rnorm(200, 0, 5)'</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">t</span>, <span class="va">t2</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">10</span>, <span class="fl">10</span><span class="op">)</span>,
+     xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">10</span>, <span class="fl">10</span><span class="op">)</span>, pch <span class="op">=</span> <span class="fl">19</span>, col <span class="op">=</span> <span class="st">'gray'</span>,
+     xlab <span class="op">=</span> <span class="st">'rnorm(200, 0, 5)'</span>, ylab <span class="op">=</span> <span class="st">'rnorm(200, 0, 5)'</span><span class="op">)</span>
 
 <span class="co"># highlight four quadrant by sign</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/text.html">text</a></span><span class="op">(</span><span class="fl">5</span>,<span class="fl">5</span>, <span class="st">'(+, +)'</span>, col <span class="op">=</span> <span class="st">'blue'</span><span class="op">)</span>
@@ -256,7 +235,7 @@ RP_g = \frac{R_{gb}\times RI_{ge}}{n^2}
 <span class="co"># make quadrant lines</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/abline.html">abline</a></span><span class="op">(</span>h <span class="op">=</span> <span class="fl">0</span>, col <span class="op">=</span> <span class="st">'red'</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/abline.html">abline</a></span><span class="op">(</span>v <span class="op">=</span> <span class="fl">0</span>, col <span class="op">=</span> <span class="st">'red'</span><span class="op">)</span></code></pre></div>
-<p><img src="workshop_introduction_files/figure-html/stat_sta-1.png" width="700"></p>
+<p><img src="workshop_introduction_files/figure-html/stat_stat-1.png" width="480" style="display: block; margin: auto;"></p>
 </div>
 <div id="aggregating-the-effect-of-the-binding-events" class="section level2">
 <h2 class="hasAnchor">
@@ -264,7 +243,7 @@ RP_g = \frac{R_{gb}\times RI_{ge}}{n^2}
 <p>Empirical Cumulative Distribution Function (ECDF): the proportion of genes in a category (up- or down-regulated genes) that are ranked at or better than the x-axis (regulatory potential value) value <span class="citation">Tang et al. (2011)</span>.</p>
 <p>Aggregate the effect of the factor perturbation in relation to its regulatory potential.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># make a random stat variabl</span>
+<code class="sourceCode R"><span class="co"># make a random stat variable</span>
 <span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">12345</span><span class="op">)</span>
 <span class="va">t</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">200</span>, <span class="fl">0</span>, <span class="fl">5</span><span class="op">)</span>
 
@@ -273,16 +252,16 @@ RP_g = \frac{R_{gb}\times RI_{ge}}{n^2}
 
 <span class="co"># plot ecdf</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">ecdf_fun</span>,
-     main <span class="op">=</span> <span class="st">''</span>,
-     xlab <span class="op">=</span> <span class="st">'rnorm(200, 0, 5)'</span>,
-     ylab <span class="op">=</span> <span class="st">'ECDF'</span><span class="op">)</span></code></pre></div>
-<p><img src="workshop_introduction_files/figure-html/ecdf-1.png" width="700"></p>
+     main <span class="op">=</span> <span class="st">''</span>, xlab <span class="op">=</span> <span class="st">'rnorm(200, 0, 5)'</span>, ylab <span class="op">=</span> <span class="st">'ECDF'</span><span class="op">)</span></code></pre></div>
+<p><img src="workshop_introduction_files/figure-html/ecdf-1.png" width="480" style="display: block; margin: auto;"></p>
 </div>
 </div>
 <div id="workflow-for-integrating-binding-and-expression-data" class="section level1">
 <h1 class="hasAnchor">
 <a href="#workflow-for-integrating-binding-and-expression-data" class="anchor"></a>Workflow for integrating binding and expression data</h1>
-<p><a href="diagram.jpg">Diagram</a></p>
+<div class="figure">
+<img src="diagram.jpg" alt=""><p class="caption">Workflow</p>
+</div>
 </div>
 <div id="functions-in-the-target-r-package" class="section level1">
 <h1 class="hasAnchor">
@@ -326,7 +305,10 @@ RP_g = \frac{R_{gb}\times RI_{ge}}{n^2}
 <li>The source code for the package and the interactive application are available <a href="https://github.com/MahShaaban/target">here</a>
 </li>
 </ul>
-<p>Code Walkthrough (–&gt; Next)</p>
+<div id="code-walkthrough-next" class="section level3">
+<h3 class="hasAnchor">
+<a href="#code-walkthrough-next" class="anchor"></a>Code Walkthrough (–&gt; Next)</h3>
+</div>
 <div id="references" class="section level2 unnumbered">
 <h2 class="hasAnchor">
 <a href="#references" class="anchor"></a>References</h2>

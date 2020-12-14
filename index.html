@@ -13,23 +13,22 @@
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
 <script src="pkgdown.js"></script><meta property="og:title" content="targetShop">
 <meta property="og:description" content="Researchers use ChIP binding data to identify potential 
-    transcription factor binding sites. Similarly, they use gene expression data
-    from sequencing or microarrays to quantify the effect of the factor 
+    transcription factor binding sites. They use gene expression data from 
+    sequencing or microarrays to quantify the effect of the factor 
     overexpression or knockdown on its targets. The integration of the binding 
     and expression data therefore can be used to improve the understanding of a 
     transcription factor function. In this workshop, we present a complete 
-    workflow for inegrating the gene expression (RNA-seq) and DNA-binding data 
+    workflow for integrating the gene expression (RNA-seq) and DNA-binding data 
     (ChIP-seq) to predict the combined function of two transcription factors 
     using R/Bioconductor. The example we will be using in the workshop is from 
     real datasets of two functionally and evolutionary related transcription 
-    factors YY1 and YY2 in HeLa cells. We will try to identify the factor-
-    specific and the shared targets of the factors in this particular cell line.
-    Then we will use a technique find out the aggregate functions of the factors
-    on their individual (inducer or repressor) and common targets (cooperative 
-    or competitive). The first half of the workshop would be dedicated to 
-    introduce and walk through the workflow interactively in a live demo. In the
-    second half, we will explore the output of the analysis to answerspecific 
-    questions in a quiz format followed by an open discussion. ">
+    factors YY1 and YY2 in HeLa cells. We will try to identify the 
+    factor-specific and the shared targets of the factors in this particular 
+    cell line. Then we will use a technique find out the aggregate functions of 
+    the factors on their individual (inducer or repressor) and common targets
+    (cooperative or competitive). The first half of the workshop would be 
+    dedicated to introduce the target package followed by a walk through the 
+    workflow interactively in a live demo in the second half.">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -112,7 +111,7 @@
 <div id="description" class="section level2">
 <h2 class="hasAnchor">
 <a href="#description" class="anchor"></a>Description</h2>
-<p>Researchers use ChIP binding data to identify potential transcription factor binding sites. They use gene expression data from sequencing or microarrays to quantify the effect of the factor over-expression or knockdown on its targets. The integration of the binding and expression data therefore can be used to improve the understanding of a transcription factor function. In this workshop, we present a complete workflow for integrating the gene expression (RNA-seq) and DNA-binding data (ChIP-seq) to predict the combined function of two transcription factors using R/Bioconductor. The example we will be using in the workshop is from real datasets of two functionally and evolutionary related transcription factors YY1 and YY2 in HeLa cells. We will try to identify the factor-specific and the shared targets of the factors in this particular cell line. Then we will use a technique find out the aggregate functions of the factors on their individual (inducer or repressor) and common targets (cooperative or competitive). The first half of the workshop would be dedicated to introduce the target package followed by walk through the workflow interactively in a live demo in the second half.</p>
+<p>Researchers use ChIP binding data to identify potential transcription factor binding sites. They use gene expression data from sequencing or microarrays to quantify the effect of the factor over-expression or knockdown on its targets. The integration of the binding and expression data therefore can be used to improve the understanding of a transcription factor function. In this workshop, we present a complete workflow for integrating the gene expression (RNA-seq) and DNA-binding data (ChIP-seq) to predict the combined function of two transcription factors using R/Bioconductor. The example we will be using in the workshop is from real datasets of two functionally and evolutionary related transcription factors YY1 and YY2 in HeLa cells. We will try to identify the factor-specific and the shared targets of the factors in this particular cell line. Then we will use a technique find out the aggregate functions of the factors on their individual (inducer or repressor) and common targets (cooperative or competitive). The first half of the workshop would be dedicated to introduce the target package followed by a walk through the workflow interactively in a live demo in the second half.</p>
 </div>
 <div id="pre-requisites" class="section level2">
 <h2 class="hasAnchor">
@@ -128,7 +127,7 @@
 <h2 class="hasAnchor">
 <a href="#participation" class="anchor"></a>Participation</h2>
 <p>Participants are expected to walk through the code (rmarkdown document). A brief introduction will be given at the beginning to introduce the package and discussion will be at the end.</p>
-<p>To run the materials locally, use the docker image <a href="https://hub.docker.com/repository/docker/mahshaaban/targetshop/">mahshaaban/targetshop</a> and knit the <code>Rmd</code> files from within Rstudio.</p>
+<p>To run the materials locally, use the docker image <a href="https://hub.docker.com/repository/docker/mahshaaban/targetshop/">mahshaaban/targetshop</a> and knit the <code>Rmd</code> files in <code>vignettes/</code> from within Rstudio.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1"></a><span class="ex">docker</span> pull mahshaaban/targetshop:latest</span>
 <span id="cb1-2"><a href="#cb1-2"></a><span class="ex">docker</span> run -e PASSWORD=<span class="op">&lt;</span>a_password<span class="op">&gt;</span> -p 8787:8787 mahshaaban/targetshop:latest</span></code></pre></div>
 <p>An Rstudio session will be accessable at <a href="https://localhost:8787/">https://localhost:8787/</a> in the browser. The login username is always <code>rstudio</code> and the password is <code>&lt;a_password&gt;</code>.</p>
@@ -207,19 +206,19 @@
 <li>Test the results using KS test through <code>test_predicitons</code>
 </li>
 </ul>
-</div>
-</div>
-<div id="workshop--next" class="section level1">
-<h1 class="hasAnchor">
-<a href="#workshop--next" class="anchor"></a>Workshop (–&gt; Next)</h1>
+<div id="workshop--next" class="section level3">
+<h3 class="hasAnchor">
+<a href="#workshop--next" class="anchor"></a>Workshop (–&gt; Next)</h3>
 <p>The workshop is divided into two parts</p>
 <ul>
-<li>Introduction: <a href="https://mahshaaban.github.io/targetShop/articles/workshop_introduction.html">workshop_introduction</a>
+<li>Introduction: <a href="https://mahshaaban.github.io/targetShop/articles/workshop_introduction.html">Introduction: Introduction to target package</a>
 </li>
-<li>Code walkthrough: <a href="https://mahshaaban.github.io/targetShop/articles/workshop_code.html">workshop_code</a>
+<li>Code walkthrough: <a href="https://mahshaaban.github.io/targetShop/articles/workshop_code.html">Code Walkthrough: A use case of YY1 and YY2 in HeLa cells</a>
 </li>
 </ul>
 <p>This workshop is based on a workflow article: <a href="https://github.com/MahShaaban/targetFlow">a draft</a></p>
+</div>
+</div>
 </div>
 
   </div>

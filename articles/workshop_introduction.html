@@ -45,7 +45,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -71,7 +71,7 @@
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="https://github.com/MahShaaban/targetShop">
-    <span class="fa fa-github"></span>
+    <span class="fas fa-github"></span>
      
   </a>
 </li>
@@ -85,15 +85,14 @@
 
       
 
-      </header><script src="workshop_introduction_files/accessible-code-block-0.0.1/empty-anchor.js"></script><link href="workshop_introduction_files/anchor-sections-1.0/anchor-sections.css" rel="stylesheet">
-<script src="workshop_introduction_files/anchor-sections-1.0/anchor-sections.js"></script><div class="row">
+      </header><script src="workshop_introduction_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Introduction: Introduction to target package</h1>
                         <h4 class="author">Mahmoud Ahmed<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>
 </h4>
             
-            <h4 class="date">2020-12-14</h4>
+            <h4 class="date">2020-12-15</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/MahShaaban/targetShop/blob/master/vignettes/workshop_introduction.Rmd"><code>vignettes/workshop_introduction.Rmd</code></a></small>
       <div class="hidden name"><code>workshop_introduction.Rmd</code></div>
@@ -138,7 +137,7 @@ S_p = e^{-(0.5+4\Delta)}
 <div id="modeling-the-regulatory-potential-as-the-sum-of-the-weighted-peaks" class="section level2">
 <h2 class="hasAnchor">
 <a href="#modeling-the-regulatory-potential-as-the-sum-of-the-weighted-peaks" class="anchor"></a>Modeling the regulatory potential as the sum of the weighted peaks</h2>
-<p>Gene Score (<span class="math inline">\(S_g\)</span>): is the sum of the scores (<span class="math inline">\(S_p\)</span>) of the <span class="math inline">\(k\)</span> nearby peaks from the TSS.</p>
+<p>Gene Score (<span class="math inline">\(S_g\)</span>): is the sum of the scores (<span class="math inline">\(S_p\)</span>) of the <span class="math inline">\(k\)</span> peaks nearby the TSS.</p>
 <p><span class="math display">\[S_g = \sum_{i=1}^k S_{pi}\]</span></p>
 <p>Regulatory potential increases with the number of binding sites <span class="citation">Tang et al. (2011)</span>.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
@@ -164,7 +163,7 @@ S_p = e^{-(0.5+4\Delta)}
 <div id="integrating-the-factor-binding-and-the-expression-information" class="section level2">
 <h2 class="hasAnchor">
 <a href="#integrating-the-factor-binding-and-the-expression-information" class="anchor"></a>Integrating the factor binding and the expression information</h2>
-<p>Rank Product (<span class="math inline">\(RP_g\)</span>): the gene score (<span class="math inline">\(R_{gb}\)</span>) is multiplied by the gene statistics (<span class="math inline">\(R_{ge}\)</span>) from differential expression <span class="citation">Breitling et al. (2004)</span>.</p>
+<p>Rank Product (<span class="math inline">\(RP_g\)</span>): the gene score (<span class="math inline">\(R_{gb}\)</span>) rank is multiplied by the gene statistics rank (<span class="math inline">\(R_{ge}\)</span>) from differential expression <span class="citation">Breitling et al. (2004)</span>.</p>
 <p><span class="math display">\[
 RP_g = \frac{R_{gb}\times R_{ge}}{n^2}
 \]</span></p>
@@ -209,7 +208,7 @@ RP_g = \frac{R_{gb}\times R_{ge}}{n^2}
 <div id="modeling-the-interaction-of-two-factors-using-independent-perturbations" class="section level2">
 <h2 class="hasAnchor">
 <a href="#modeling-the-interaction-of-two-factors-using-independent-perturbations" class="anchor"></a>Modeling the interaction of two factors using independent perturbations</h2>
-<p>Regulatory Interaction (<span class="math inline">\(RI\)</span>): is the product of the gene statistics from differential expression of the perturbation of the two factors (<span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>) separately.</p>
+<p>Regulatory Interaction (<span class="math inline">\(RI\)</span>): is the product of the gene statistics from differential expression of the perturbation of the two factors (<span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span>) separately.</p>
 <p><span class="math display">\[
 RI_{g} = x_{ge}\times y_{ge}
 \]</span> and,</p>
@@ -300,9 +299,9 @@ RP_g = \frac{R_{gb}\times RI_{ge}}{n^2}
 <li>
 <code>target</code> is available as an open source R/Bioconductor package, <a href="https://bioconductor.org/packages/target/">here</a>
 </li>
-<li>An interactive application can be invoked locally through R or accessed directly on the web, <a href="https://mahshaaban.shinyapps.io/target-app/">here</a>
+<li>An interactive shiny application can be invoked locally through R or accessed directly on the web, <a href="https://mahshaaban.shinyapps.io/target-app/">here</a>
 </li>
-<li>The source code for the package and the interactive application are available <a href="https://github.com/MahShaaban/target">here</a>
+<li>The source code for the package and the interactive application is available <a href="https://github.com/MahShaaban/target">here</a>
 </li>
 </ul>
 <div id="code-walkthrough-next" class="section level3">

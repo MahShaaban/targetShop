@@ -45,7 +45,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -71,7 +71,7 @@
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="https://github.com/MahShaaban/targetShop">
-    <span class="fa fa-github"></span>
+    <span class="fas fa-github"></span>
      
   </a>
 </li>
@@ -85,15 +85,14 @@
 
       
 
-      </header><script src="workshop_code_files/accessible-code-block-0.0.1/empty-anchor.js"></script><link href="workshop_code_files/anchor-sections-1.0/anchor-sections.css" rel="stylesheet">
-<script src="workshop_code_files/anchor-sections-1.0/anchor-sections.js"></script><div class="row">
+      </header><script src="workshop_code_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Code Walkthrough: A use case of YY1 and YY2 in HeLa cells</h1>
                         <h4 class="author">Mahmoud Ahmed<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>
 </h4>
             
-            <h4 class="date">2020-12-14</h4>
+            <h4 class="date">2020-12-15</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/MahShaaban/targetShop/blob/master/vignettes/workshop_code.Rmd"><code>vignettes/workshop_code.Rmd</code></a></small>
       <div class="hidden name"><code>workshop_code.Rmd</code></div>
@@ -109,7 +108,6 @@
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://readr.tidyverse.org">readr</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://purrr.tidyverse.org">purrr</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.org/packages/GenomicRanges">GenomicRanges</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.org/packages/Biostrings">Biostrings</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">rtracklayer</span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://bioconductor.org/packages/AnnotationDbi">AnnotationDbi</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">TxDb.Hsapiens.UCSC.hg19.knownGene</span><span class="op">)</span>
@@ -180,7 +178,7 @@
 <ul>
 <li>Microarrays were obtained in the form of differential expression between the two conditions from <a href="http://www.licpathway.net/KnockTF/index.html">KnockTF</a>.</li>
 <li>The ChIP peaks were obtained in the form of <code>bed</code> files from <a href="https://chip-atlas.org">ChIP-Atlas</a>.</li>
-<li>USSC hg19 human genome to extract the genomic annotations</li>
+<li>USSC hg19 human genome to extract the genomic annotation</li>
 </ul>
 <p>Data analysis:</p>
 <ol style="list-style-type: decimal">
@@ -294,7 +292,8 @@
 <a href="#preparing-the-expression-data" class="anchor"></a>Preparing the expression data</h2>
 <p>The differential expression data were downloaded in tabular format.</p>
 <ul>
-<li>Locate the files in <code>data/</code>,</li>
+<li>Locate the files in <code>data/</code>
+</li>
 <li>Read the files using <code>read_tsv</code>
 </li>
 <li>Select and rename the relevant columns</li>
@@ -336,7 +335,7 @@
 <span class="co">#&gt;         FALSE TRUE</span>
 <span class="co">#&gt;   FALSE  7435  132</span>
 <span class="co">#&gt;   TRUE   8804  224</span></code></pre></div>
-<p>The knockdown of either factor in HeLa cells seem to change the expression of many genes in either directions (Figure 1A&amp;B). Moreover, the changes resulting from the knockdown of the factors individually are correlated (Figure 1C). This suggest that, many of the regulated genes are shared targets of the two factors or they respond similarly to their perturbation of either factor.</p>
+<p>The knockdown of either factor in HeLa cells seem to change the expression of many genes in either directions (Figure 1A&amp;B). Moreover, the changes resulting from the knockdown of the factors individually are correlated (Figure 1C). This suggest that, many of the regulated genes are shared targets of the two factors or they respond similarly to the perturbation of either factor.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Figure 1</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span>
@@ -379,7 +378,7 @@ Figure 1. Differential expression between factor knockdown and control HeLa cell
 <div id="preparing-genome-annotation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#preparing-genome-annotation" class="anchor"></a>Preparing genome annotation</h2>
-<p>The gene information in <code>express</code> is recorded using the gene SYMBOLS.</p>
+<p>The gene information in <code>express</code> are recorded using the gene SYMBOLS.</p>
 <ul>
 <li>Map SYMBOLS to the ENTREZIDs using <code>org.Hs.eg.db</code>
 </li>
@@ -467,8 +466,8 @@ Figure 1. Differential expression between factor knockdown and control HeLa cell
 <span class="co">#&gt;   uc022brr.1                </span>
 <span class="co">#&gt;   -------</span>
 <span class="co">#&gt;   seqinfo: 93 sequences (1 circular) from hg19 genome</span></code></pre></div>
-<p>The resulting object, <code>genome</code>, from the previous step is a <code>tibble</code> that shares the column <code>gene_id</code> with the expression data <code>express</code>.</p>
-<p>Now the two objects can be merged. The merged object, <code>regions</code>, is similarly <code>tibble</code> that contains genome and expression information of all common genes.</p>
+<p>The resulting object, <code>genome_df</code>, from the previous step is a <code>tibble</code> that shares the column <code>gene_id</code> with the expression data <code>express</code>.</p>
+<p>Now the two objects can be merged. The merged object, <code>regions</code>, is similarly a <code>tibble</code> that contains genome and expression information of all common genes.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># make regions by merging the genome and express data</span>
 <span class="va">regions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">express</span>,
@@ -521,7 +520,7 @@ Figure 1. Differential expression between factor knockdown and control HeLa cell
 <h1 class="hasAnchor">
 <a href="#predicting-gene-targets-of-individual-factors" class="anchor"></a>Predicting gene targets of individual factors</h1>
 <p>The standard target analysis includes the identification of associated peaks using <code>associated_peaks</code> and direct targets using <code>direct_targets</code>.</p>
-<p>The input for these functions are</p>
+<p>The inputs for these functions are</p>
 <ul>
 <li><code>peaks</code></li>
 <li><code>regions</code></li>
@@ -530,7 +529,7 @@ Figure 1. Differential expression between factor knockdown and control HeLa cell
 <li>
 <code>stats_col</code>, the statistics column which is the fold-change in this case.</li>
 </ul>
-<p>The resulting objects are <code>GRanges</code> for the identified peaks assigned to the regions <code>ap</code> or the ranked targets. Several columns is added to the metadata objects of the <code>GRanges</code> to save the calculations.</p>
+<p>The resulting objects are <code>GRanges</code> for the identified peaks assigned to the regions or the ranked targets. Several columns is added to the metadata objects of the <code>GRanges</code> to save the calculations.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># get associated peaks</span>
 <span class="va">ap</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map2.html">map2</a></span><span class="op">(</span><span class="va">peaks</span>, <span class="va">regions</span>,
@@ -757,8 +756,8 @@ Figure 1. Differential expression between factor knockdown and control HeLa cell
 <span class="co">#&gt; [1] 0.05583011 0.05652992 0.05672324 0.05672324 0.05672324 0.05672324</span></code></pre></div>
 <p>To determine the dominant function of a factor,</p>
 <ul>
-<li>We divide the targets by the direction of the effect of knockdown of the factor on the expression of the target and show the regulatory potential of the target on these groups.</li>
-<li>We use the empirical distribution function (ECDF) to show the fraction of targets at a specified regulatory potential or less.</li>
+<li>We divide the targets into groups based on the effect of the knockdown</li>
+<li>We use the empirical distribution function (ECDF) to show the fraction of targets at a specified regulatory potential value or less.</li>
 </ul>
 <p>Because the ranks rather than the absolute value of the regulatory potential is used, the lower the value the higher the potential. Then the groups of targets can be compared to each other or to a theoretical distribution.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
@@ -793,7 +792,7 @@ Figure 2. Predicted functions of YY1 and YY2 on their specific targets. Bindings
 </p>
 </div>
 <p>The scores of the individual peaks are a decreasing function of the distance from the transcription start sites.</p>
-<p>The closer the factor binding site from the start site the lower the score. The distribution of these scores is very similar for both factors (Figure 2A). The ECDF of the down-regulated of YY1 is higher than that of up- and none-regulated targets (Figure 2B). Therefore, the absence of YY1 on its targets result in aggregate in their down regulation. If indeed these are true targets then we expect YY1 to induce their expression.</p>
+<p>The closer the factor binding site from the start site the lower the score. The distribution of these scores is very similar for both factors (Figure 2A). The ECDF of the down-regulated targets of YY1 is higher than that of up- and none-regulated targets (Figure 2B). Therefore, the absence of YY1 on its targets result in aggregate in their down regulation.</p>
 <p>The opposite is true for YY2 where more high ranking targets are up-regulated by the factor knockdown (Figure 2C).</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># Table 2</span>
@@ -829,7 +828,7 @@ Figure 2. Predicted functions of YY1 and YY2 on their specific targets. Bindings
 </tbody>
 </table>
 <p>To formally test these observations, we use the Kolmogorov-Smirnov (KS) test. The distribution of the two groups are compared for equality. If one lies one either side of the other then they must be drawn from different distributions.</p>
-<p>Here, we compared the up and down regulated functions for both factors (Table 2).</p>
+<p>Here, we compared the up- and down-regulated functions for both factors (Table 2).</p>
 <p>In both cases, the distribution of the two groups were significantly different from one another.</p>
 </div>
 <div id="predicting-the-shared-targets-of-the-two-factors" class="section level1">
@@ -957,8 +956,8 @@ Figure 3. Predicted function of YY1 and YY2 on their shared targets. Shared bind
 <h1 class="hasAnchor">
 <a href="#summary" class="anchor"></a>Summary</h1>
 <ul>
-<li>We present a workflow for predicting the direct targets of a transcription factor by integrating binding and expression data.</li>
-<li>The <code>target</code> package implements the BETA algorithm ranking gene targets based on the distance of the ChIP peaks of the transcription factor in the genes and the differential expression of the factor perturbation.</li>
+<li>I presented a workflow for predicting the direct targets of a transcription factor by integrating binding and expression data.</li>
+<li>The <code>target</code> package implements the BETA algorithm to rank targets based on the distance of the ChIP peaks of the transcription factor in the genes and the differential expression from the factor perturbation.</li>
 <li>To predict the combined function of two factors, two sets of data are used to find the shared peaks and the product of their differential expression.</li>
 </ul>
 <div id="open-discussion-next" class="section level3">

@@ -92,7 +92,7 @@
                         <h4 class="author">Mahmoud Ahmed<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>
 </h4>
             
-            <h4 class="date">2020-12-15</h4>
+            <h4 class="date">2020-12-16</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/MahShaaban/targetShop/blob/master/vignettes/workshop_code.Rmd"><code>vignettes/workshop_code.Rmd</code></a></small>
       <div class="hidden name"><code>workshop_code.Rmd</code></div>
@@ -387,30 +387,34 @@ Figure 1. Differential expression between factor knockdown and control HeLa cell
 <li>Resize the transcripts to 100kb upstream from transcription start sites</li>
 </ul>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># load genome data</span>
+<code class="sourceCode R"><span class="co"># map symbols to entrez ids</span>
 <span class="va">symbol_entrez</span> <span class="op">&lt;-</span> <span class="fu">AnnotationDbi</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/AnnotationDbi/man/AnnotationDb-class.html">select</a></span><span class="op">(</span><span class="va">org.Hs.eg.db</span>,
                                        keys <span class="op">=</span> <span class="va">express</span><span class="op">$</span><span class="va">YY1</span><span class="op">$</span><span class="va">gene</span>,
                                        columns <span class="op">=</span> <span class="st">'ENTREZID'</span>,
-                                       keytype <span class="op">=</span> <span class="st">'SYMBOL'</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html">setNames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'gene'</span>, <span class="st">'gene_id'</span><span class="op">)</span><span class="op">)</span>
+                                       keytype <span class="op">=</span> <span class="st">'SYMBOL'</span><span class="op">)</span>
 
-<span class="co"># format genome to join with express</span>
+<span class="co"># remove unmapped genes</span>
+<span class="va">symbol_entrez</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/na.fail.html">na.omit</a></span><span class="op">(</span><span class="va">symbol_entrez</span><span class="op">)</span>
+
+<span class="co"># resize regions</span>
 <span class="va">genome</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/intra-range-methods.html">promoters</a></span><span class="op">(</span><span class="va">TxDb.Hsapiens.UCSC.hg19.knownGene</span>,
                     upstream <span class="op">=</span> <span class="fl">100000</span>,
+                    filter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>gene_id <span class="op">=</span> <span class="va">symbol_entrez</span><span class="op">$</span><span class="va">ENTREZID</span><span class="op">)</span>,
                     columns <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'tx_id'</span>, <span class="st">'tx_name'</span>, <span class="st">'gene_id'</span><span class="op">)</span><span class="op">)</span>
 
-<span class="va">genome_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/as_tibble.html">as_tibble</a></span><span class="op">(</span><span class="va">genome</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>gene_id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span><span class="op">(</span><span class="va">gene_id</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<span class="co"># match and add symbols</span>
+<span class="va">ind</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/match.html">match</a></span><span class="op">(</span><span class="va">genome</span><span class="op">$</span><span class="va">gene_id</span><span class="op">@</span><span class="va">unlistData</span>, <span class="va">symbol_entrez</span><span class="op">$</span><span class="va">ENTREZID</span><span class="op">)</span>
+<span class="va">genome</span><span class="op">$</span><span class="va">gene</span> <span class="op">&lt;-</span> <span class="va">symbol_entrez</span><span class="op">$</span><span class="va">SYMBOL</span><span class="op">[</span><span class="va">ind</span><span class="op">]</span></code></pre></div>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># show the first few entries of the mapping data.frame</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">symbol_entrez</span><span class="op">)</span>
-<span class="co">#&gt;      gene gene_id</span>
-<span class="co">#&gt; 1  IFI44L   10964</span>
-<span class="co">#&gt; 2 C7orf57  136288</span>
-<span class="co">#&gt; 3  KLHL32  114792</span>
-<span class="co">#&gt; 4   TREM2   54209</span>
-<span class="co">#&gt; 5   EPHX2    2053</span>
-<span class="co">#&gt; 6  LRRC25  126364</span>
+<span class="co">#&gt;    SYMBOL ENTREZID</span>
+<span class="co">#&gt; 1  IFI44L    10964</span>
+<span class="co">#&gt; 2 C7orf57   136288</span>
+<span class="co">#&gt; 3  KLHL32   114792</span>
+<span class="co">#&gt; 4   TREM2    54209</span>
+<span class="co">#&gt; 5   EPHX2     2053</span>
+<span class="co">#&gt; 6  LRRC25   126364</span>
 
 <span class="co"># show txdb object</span>
 <span class="va">TxDb.Hsapiens.UCSC.hg19.knownGene</span>
@@ -437,79 +441,100 @@ Figure 1. Differential expression between factor knockdown and control HeLa cell
 
 <span class="co"># show the</span>
 <span class="fu">show</span><span class="op">(</span><span class="va">genome</span><span class="op">)</span>
-<span class="co">#&gt; GRanges object with 82960 ranges and 3 metadata columns:</span>
+<span class="co">#&gt; GRanges object with 56521 ranges and 4 metadata columns:</span>
 <span class="co">#&gt;                    seqnames        ranges strand |     tx_id     tx_name</span>
 <span class="co">#&gt;                       &lt;Rle&gt;     &lt;IRanges&gt;  &lt;Rle&gt; | &lt;integer&gt; &lt;character&gt;</span>
-<span class="co">#&gt;   uc001aaa.3           chr1  -88126-12073      + |         1  uc001aaa.3</span>
-<span class="co">#&gt;   uc010nxq.1           chr1  -88126-12073      + |         2  uc010nxq.1</span>
-<span class="co">#&gt;   uc010nxr.1           chr1  -88126-12073      + |         3  uc010nxr.1</span>
-<span class="co">#&gt;   uc001aal.1           chr1  -30909-69290      + |         4  uc001aal.1</span>
-<span class="co">#&gt;   uc001aaq.2           chr1 221084-321283      + |         5  uc001aaq.2</span>
+<span class="co">#&gt;   uc001abv.1           chr1 760530-860729      + |        21  uc001abv.1</span>
+<span class="co">#&gt;   uc001abw.1           chr1 761121-861320      + |        22  uc001abw.1</span>
+<span class="co">#&gt;   uc031pjl.1           chr1 761302-861501      + |        23  uc031pjl.1</span>
+<span class="co">#&gt;   uc031pjm.1           chr1 761302-861501      + |        24  uc031pjm.1</span>
+<span class="co">#&gt;   uc031pjn.1           chr1 761302-861501      + |        25  uc031pjn.1</span>
 <span class="co">#&gt;          ...            ...           ...    ... .       ...         ...</span>
-<span class="co">#&gt;   uc011mgu.1 chrUn_gl000237   2487-102686      - |     82956  uc011mgu.1</span>
-<span class="co">#&gt;   uc011mgv.2 chrUn_gl000241  36676-136875      - |     82957  uc011mgv.2</span>
-<span class="co">#&gt;   uc011mgw.1 chrUn_gl000243  -88499-11700      + |     82958  uc011mgw.1</span>
-<span class="co">#&gt;   uc022brq.1 chrUn_gl000243  -86392-13807      + |     82959  uc022brq.1</span>
-<span class="co">#&gt;   uc022brr.1 chrUn_gl000247   5617-105816      - |     82960  uc022brr.1</span>
-<span class="co">#&gt;                      gene_id</span>
-<span class="co">#&gt;              &lt;CharacterList&gt;</span>
-<span class="co">#&gt;   uc001aaa.3       100287102</span>
-<span class="co">#&gt;   uc010nxq.1       100287102</span>
-<span class="co">#&gt;   uc010nxr.1       100287102</span>
-<span class="co">#&gt;   uc001aal.1           79501</span>
-<span class="co">#&gt;   uc001aaq.2                </span>
-<span class="co">#&gt;          ...             ...</span>
-<span class="co">#&gt;   uc011mgu.1                </span>
-<span class="co">#&gt;   uc011mgv.2                </span>
-<span class="co">#&gt;   uc011mgw.1                </span>
-<span class="co">#&gt;   uc022brq.1                </span>
-<span class="co">#&gt;   uc022brr.1                </span>
+<span class="co">#&gt;   uc011mgb.1 chrUn_gl000223  68588-168787      - |     82934  uc011mgb.1</span>
+<span class="co">#&gt;   uc011mgc.1 chrUn_gl000223  68588-168787      - |     82935  uc011mgc.1</span>
+<span class="co">#&gt;   uc011mgd.2 chrUn_gl000223 119531-219730      - |     82936  uc011mgd.2</span>
+<span class="co">#&gt;   uc031tgg.1 chrUn_gl000223 119531-219730      - |     82937  uc031tgg.1</span>
+<span class="co">#&gt;   uc031tgh.1 chrUn_gl000223 119531-219730      - |     82938  uc031tgh.1</span>
+<span class="co">#&gt;                      gene_id        gene</span>
+<span class="co">#&gt;              &lt;CharacterList&gt; &lt;character&gt;</span>
+<span class="co">#&gt;   uc001abv.1          148398      SAMD11</span>
+<span class="co">#&gt;   uc001abw.1          148398      SAMD11</span>
+<span class="co">#&gt;   uc031pjl.1          148398      SAMD11</span>
+<span class="co">#&gt;   uc031pjm.1          148398      SAMD11</span>
+<span class="co">#&gt;   uc031pjn.1          148398      SAMD11</span>
+<span class="co">#&gt;          ...             ...         ...</span>
+<span class="co">#&gt;   uc011mgb.1            7637       ZNF84</span>
+<span class="co">#&gt;   uc011mgc.1            7637       ZNF84</span>
+<span class="co">#&gt;   uc011mgd.2            7574       ZNF26</span>
+<span class="co">#&gt;   uc031tgg.1            7574       ZNF26</span>
+<span class="co">#&gt;   uc031tgh.1            7574       ZNF26</span>
 <span class="co">#&gt;   -------</span>
 <span class="co">#&gt;   seqinfo: 93 sequences (1 circular) from hg19 genome</span></code></pre></div>
-<p>The resulting object, <code>genome_df</code>, from the previous step is a <code>tibble</code> that shares the column <code>gene_id</code> with the expression data <code>express</code>.</p>
-<p>Now the two objects can be merged. The merged object, <code>regions</code>, is similarly a <code>tibble</code> that contains genome and expression information of all common genes.</p>
+<p>Now the two objects can be merged. The merged object, <code>regions</code>, is similarly a <code>GRanges</code> that contains genome and expression information of all common genes.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># make regions by merging the genome and express data</span>
 <span class="va">regions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">express</span>,
-               <span class="op">~</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">inner_join</a></span><span class="op">(</span><span class="va">genome_df</span>, <span class="va">symbol_entrez</span><span class="op">)</span> <span class="op">%&gt;%</span>
-                 <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">inner_join</a></span><span class="op">(</span><span class="va">.x</span><span class="op">)</span> <span class="op">%&gt;%</span>
-                 <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/makeGRangesFromDataFrame.html">makeGRangesFromDataFrame</a></span><span class="op">(</span>keep.extra.columns <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+               <span class="op">~</span><span class="op">{</span>
+                 <span class="co"># make a copy of genome</span>
+                 <span class="va">gr</span> <span class="op">&lt;-</span> <span class="va">genome</span>
+                 
+                 <span class="co"># match gene names </span>
+                 <span class="va">ind</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/match.html">match</a></span><span class="op">(</span><span class="va">gr</span><span class="op">$</span><span class="va">gene</span>, <span class="va">.x</span><span class="op">$</span><span class="va">gene</span><span class="op">)</span>
+                 
+                 <span class="co"># add the expression info to the metadata</span>
+                 <span class="fu">mcols</span><span class="op">(</span><span class="va">gr</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span><span class="op">(</span><span class="fu">mcols</span><span class="op">(</span><span class="va">gr</span><span class="op">)</span>, <span class="va">.x</span><span class="op">[</span><span class="va">ind</span>,<span class="op">]</span><span class="op">)</span>
+                 <span class="va">gr</span>
+               <span class="op">}</span><span class="op">)</span></code></pre></div>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># show the first few entries in the GRanges object</span>
 <span class="va">regions</span><span class="op">$</span><span class="va">YY1</span>
-<span class="co">#&gt; GRanges object with 56521 ranges and 7 metadata columns:</span>
-<span class="co">#&gt;                 seqnames        ranges strand |     tx_id     tx_name</span>
-<span class="co">#&gt;                    &lt;Rle&gt;     &lt;IRanges&gt;  &lt;Rle&gt; | &lt;integer&gt; &lt;character&gt;</span>
-<span class="co">#&gt;       [1]           chr1 760530-860729      + |        21  uc001abv.1</span>
-<span class="co">#&gt;       [2]           chr1 761121-861320      + |        22  uc001abw.1</span>
-<span class="co">#&gt;       [3]           chr1 761302-861501      + |        23  uc031pjl.1</span>
-<span class="co">#&gt;       [4]           chr1 761302-861501      + |        24  uc031pjm.1</span>
-<span class="co">#&gt;       [5]           chr1 761302-861501      + |        25  uc031pjn.1</span>
-<span class="co">#&gt;       ...            ...           ...    ... .       ...         ...</span>
-<span class="co">#&gt;   [56517] chrUn_gl000223  68588-168787      - |     82934  uc011mgb.1</span>
-<span class="co">#&gt;   [56518] chrUn_gl000223  68588-168787      - |     82935  uc011mgc.1</span>
-<span class="co">#&gt;   [56519] chrUn_gl000223 119531-219730      - |     82936  uc011mgd.2</span>
-<span class="co">#&gt;   [56520] chrUn_gl000223 119531-219730      - |     82937  uc031tgg.1</span>
-<span class="co">#&gt;   [56521] chrUn_gl000223 119531-219730      - |     82938  uc031tgh.1</span>
-<span class="co">#&gt;               gene_id        gene          tf        fc    pvalue</span>
-<span class="co">#&gt;           &lt;character&gt; &lt;character&gt; &lt;character&gt; &lt;numeric&gt; &lt;numeric&gt;</span>
-<span class="co">#&gt;       [1]      148398      SAMD11         YY1  -0.54365   0.05581</span>
-<span class="co">#&gt;       [2]      148398      SAMD11         YY1  -0.54365   0.05581</span>
-<span class="co">#&gt;       [3]      148398      SAMD11         YY1  -0.54365   0.05581</span>
-<span class="co">#&gt;       [4]      148398      SAMD11         YY1  -0.54365   0.05581</span>
-<span class="co">#&gt;       [5]      148398      SAMD11         YY1  -0.54365   0.05581</span>
-<span class="co">#&gt;       ...         ...         ...         ...       ...       ...</span>
-<span class="co">#&gt;   [56517]        7637       ZNF84         YY1   0.08999   0.68511</span>
-<span class="co">#&gt;   [56518]        7637       ZNF84         YY1   0.08999   0.68511</span>
-<span class="co">#&gt;   [56519]        7574       ZNF26         YY1  -0.47400   0.09301</span>
-<span class="co">#&gt;   [56520]        7574       ZNF26         YY1  -0.47400   0.09301</span>
-<span class="co">#&gt;   [56521]        7574       ZNF26         YY1  -0.47400   0.09301</span>
+<span class="co">#&gt; GRanges object with 56521 ranges and 8 metadata columns:</span>
+<span class="co">#&gt;                    seqnames        ranges strand |     tx_id     tx_name</span>
+<span class="co">#&gt;                       &lt;Rle&gt;     &lt;IRanges&gt;  &lt;Rle&gt; | &lt;integer&gt; &lt;character&gt;</span>
+<span class="co">#&gt;   uc001abv.1           chr1 760530-860729      + |        21  uc001abv.1</span>
+<span class="co">#&gt;   uc001abw.1           chr1 761121-861320      + |        22  uc001abw.1</span>
+<span class="co">#&gt;   uc031pjl.1           chr1 761302-861501      + |        23  uc031pjl.1</span>
+<span class="co">#&gt;   uc031pjm.1           chr1 761302-861501      + |        24  uc031pjm.1</span>
+<span class="co">#&gt;   uc031pjn.1           chr1 761302-861501      + |        25  uc031pjn.1</span>
+<span class="co">#&gt;          ...            ...           ...    ... .       ...         ...</span>
+<span class="co">#&gt;   uc011mgb.1 chrUn_gl000223  68588-168787      - |     82934  uc011mgb.1</span>
+<span class="co">#&gt;   uc011mgc.1 chrUn_gl000223  68588-168787      - |     82935  uc011mgc.1</span>
+<span class="co">#&gt;   uc011mgd.2 chrUn_gl000223 119531-219730      - |     82936  uc011mgd.2</span>
+<span class="co">#&gt;   uc031tgg.1 chrUn_gl000223 119531-219730      - |     82937  uc031tgg.1</span>
+<span class="co">#&gt;   uc031tgh.1 chrUn_gl000223 119531-219730      - |     82938  uc031tgh.1</span>
+<span class="co">#&gt;                      gene_id        gene          tf        gene        fc</span>
+<span class="co">#&gt;              &lt;CharacterList&gt; &lt;character&gt; &lt;character&gt; &lt;character&gt; &lt;numeric&gt;</span>
+<span class="co">#&gt;   uc001abv.1          148398      SAMD11         YY1      SAMD11  -0.54365</span>
+<span class="co">#&gt;   uc001abw.1          148398      SAMD11         YY1      SAMD11  -0.54365</span>
+<span class="co">#&gt;   uc031pjl.1          148398      SAMD11         YY1      SAMD11  -0.54365</span>
+<span class="co">#&gt;   uc031pjm.1          148398      SAMD11         YY1      SAMD11  -0.54365</span>
+<span class="co">#&gt;   uc031pjn.1          148398      SAMD11         YY1      SAMD11  -0.54365</span>
+<span class="co">#&gt;          ...             ...         ...         ...         ...       ...</span>
+<span class="co">#&gt;   uc011mgb.1            7637       ZNF84         YY1       ZNF84   0.08999</span>
+<span class="co">#&gt;   uc011mgc.1            7637       ZNF84         YY1       ZNF84   0.08999</span>
+<span class="co">#&gt;   uc011mgd.2            7574       ZNF26         YY1       ZNF26  -0.47400</span>
+<span class="co">#&gt;   uc031tgg.1            7574       ZNF26         YY1       ZNF26  -0.47400</span>
+<span class="co">#&gt;   uc031tgh.1            7574       ZNF26         YY1       ZNF26  -0.47400</span>
+<span class="co">#&gt;                 pvalue</span>
+<span class="co">#&gt;              &lt;numeric&gt;</span>
+<span class="co">#&gt;   uc001abv.1   0.05581</span>
+<span class="co">#&gt;   uc001abw.1   0.05581</span>
+<span class="co">#&gt;   uc031pjl.1   0.05581</span>
+<span class="co">#&gt;   uc031pjm.1   0.05581</span>
+<span class="co">#&gt;   uc031pjn.1   0.05581</span>
+<span class="co">#&gt;          ...       ...</span>
+<span class="co">#&gt;   uc011mgb.1   0.68511</span>
+<span class="co">#&gt;   uc011mgc.1   0.68511</span>
+<span class="co">#&gt;   uc011mgd.2   0.09301</span>
+<span class="co">#&gt;   uc031tgg.1   0.09301</span>
+<span class="co">#&gt;   uc031tgh.1   0.09301</span>
 <span class="co">#&gt;   -------</span>
-<span class="co">#&gt;   seqinfo: 93 sequences from an unspecified genome; no seqlengths</span>
+<span class="co">#&gt;   seqinfo: 93 sequences (1 circular) from hg19 genome</span>
 
 <span class="co"># show the names of the columns in the object metadata</span>
 <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="fu">mcols</span><span class="op">(</span><span class="va">regions</span><span class="op">$</span><span class="va">YY1</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; [1] "tx_id"   "tx_name" "gene_id" "gene"    "tf"      "fc"      "pvalue"</span>
+<span class="co">#&gt; [1] "tx_id"   "tx_name" "gene_id" "gene"    "tf"      "gene"    "fc"     </span>
+<span class="co">#&gt; [8] "pvalue"</span>
 
 <span class="co"># show the width of the regions</span>
 <span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="fu">width</span><span class="op">(</span><span class="va">regions</span><span class="op">$</span><span class="va">YY1</span><span class="op">)</span><span class="op">)</span>
@@ -652,33 +677,33 @@ Figure 1. Differential expression between factor knockdown and control HeLa cell
 <code class="sourceCode R"><span class="co"># show direct_targets return</span>
 <span class="va">dt</span>
 <span class="co">#&gt; $YY1</span>
-<span class="co">#&gt; GRanges object with 44403 ranges and 12 metadata columns:</span>
-<span class="co">#&gt;                seqnames        ranges strand |     tx_id     tx_name</span>
-<span class="co">#&gt;                   &lt;Rle&gt;     &lt;IRanges&gt;  &lt;Rle&gt; | &lt;integer&gt; &lt;character&gt;</span>
-<span class="co">#&gt;        1           chr1 760530-860729      + |        21  uc001abv.1</span>
-<span class="co">#&gt;        6           chr1 761121-861320      + |        22  uc001abw.1</span>
-<span class="co">#&gt;       11           chr1 761302-861501      + |        23  uc031pjl.1</span>
-<span class="co">#&gt;       16           chr1 761302-861501      + |        24  uc031pjm.1</span>
-<span class="co">#&gt;       21           chr1 761302-861501      + |        25  uc031pjn.1</span>
-<span class="co">#&gt;      ...            ...           ...    ... .       ...         ...</span>
-<span class="co">#&gt;   160718 chrUn_gl000223  68588-168787      - |     82934  uc011mgb.1</span>
-<span class="co">#&gt;   160719 chrUn_gl000223  68588-168787      - |     82935  uc011mgc.1</span>
-<span class="co">#&gt;   160720 chrUn_gl000223 119531-219730      - |     82936  uc011mgd.2</span>
-<span class="co">#&gt;   160721 chrUn_gl000223 119531-219730      - |     82937  uc031tgg.1</span>
-<span class="co">#&gt;   160722 chrUn_gl000223 119531-219730      - |     82938  uc031tgh.1</span>
-<span class="co">#&gt;              gene_id        gene          tf        fc    pvalue     score</span>
+<span class="co">#&gt; GRanges object with 44403 ranges and 13 metadata columns:</span>
+<span class="co">#&gt;                seqnames        ranges strand |     tx_id     tx_name gene_id</span>
+<span class="co">#&gt;                   &lt;Rle&gt;     &lt;IRanges&gt;  &lt;Rle&gt; | &lt;integer&gt; &lt;character&gt;  &lt;list&gt;</span>
+<span class="co">#&gt;        1           chr1 760530-860729      + |        21  uc001abv.1  148398</span>
+<span class="co">#&gt;        6           chr1 761121-861320      + |        22  uc001abw.1  148398</span>
+<span class="co">#&gt;       11           chr1 761302-861501      + |        23  uc031pjl.1  148398</span>
+<span class="co">#&gt;       16           chr1 761302-861501      + |        24  uc031pjm.1  148398</span>
+<span class="co">#&gt;       21           chr1 761302-861501      + |        25  uc031pjn.1  148398</span>
+<span class="co">#&gt;      ...            ...           ...    ... .       ...         ...     ...</span>
+<span class="co">#&gt;   160718 chrUn_gl000223  68588-168787      - |     82934  uc011mgb.1    7637</span>
+<span class="co">#&gt;   160719 chrUn_gl000223  68588-168787      - |     82935  uc011mgc.1    7637</span>
+<span class="co">#&gt;   160720 chrUn_gl000223 119531-219730      - |     82936  uc011mgd.2    7574</span>
+<span class="co">#&gt;   160721 chrUn_gl000223 119531-219730      - |     82937  uc031tgg.1    7574</span>
+<span class="co">#&gt;   160722 chrUn_gl000223 119531-219730      - |     82938  uc031tgh.1    7574</span>
+<span class="co">#&gt;                 gene          tf      gene.1        fc    pvalue     score</span>
 <span class="co">#&gt;          &lt;character&gt; &lt;character&gt; &lt;character&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;</span>
-<span class="co">#&gt;        1      148398      SAMD11         YY1  -0.54365   0.05581  0.953844</span>
-<span class="co">#&gt;        6      148398      SAMD11         YY1  -0.54365   0.05581  0.944972</span>
-<span class="co">#&gt;       11      148398      SAMD11         YY1  -0.54365   0.05581  0.942342</span>
-<span class="co">#&gt;       16      148398      SAMD11         YY1  -0.54365   0.05581  0.942342</span>
-<span class="co">#&gt;       21      148398      SAMD11         YY1  -0.54365   0.05581  0.942342</span>
+<span class="co">#&gt;        1      SAMD11         YY1      SAMD11  -0.54365   0.05581  0.953844</span>
+<span class="co">#&gt;        6      SAMD11         YY1      SAMD11  -0.54365   0.05581  0.944972</span>
+<span class="co">#&gt;       11      SAMD11         YY1      SAMD11  -0.54365   0.05581  0.942342</span>
+<span class="co">#&gt;       16      SAMD11         YY1      SAMD11  -0.54365   0.05581  0.942342</span>
+<span class="co">#&gt;       21      SAMD11         YY1      SAMD11  -0.54365   0.05581  0.942342</span>
 <span class="co">#&gt;      ...         ...         ...         ...       ...       ...       ...</span>
-<span class="co">#&gt;   160718        7637       ZNF84         YY1   0.08999   0.68511  0.175405</span>
-<span class="co">#&gt;   160719        7637       ZNF84         YY1   0.08999   0.68511  0.175405</span>
-<span class="co">#&gt;   160720        7574       ZNF26         YY1  -0.47400   0.09301  0.273345</span>
-<span class="co">#&gt;   160721        7574       ZNF26         YY1  -0.47400   0.09301  0.273345</span>
-<span class="co">#&gt;   160722        7574       ZNF26         YY1  -0.47400   0.09301  0.273345</span>
+<span class="co">#&gt;   160718       ZNF84         YY1       ZNF84   0.08999   0.68511  0.175405</span>
+<span class="co">#&gt;   160719       ZNF84         YY1       ZNF84   0.08999   0.68511  0.175405</span>
+<span class="co">#&gt;   160720       ZNF26         YY1       ZNF26  -0.47400   0.09301  0.273345</span>
+<span class="co">#&gt;   160721       ZNF26         YY1       ZNF26  -0.47400   0.09301  0.273345</span>
+<span class="co">#&gt;   160722       ZNF26         YY1       ZNF26  -0.47400   0.09301  0.273345</span>
 <span class="co">#&gt;          score_rank      stat stat_rank      rank</span>
 <span class="co">#&gt;           &lt;integer&gt; &lt;numeric&gt; &lt;integer&gt; &lt;numeric&gt;</span>
 <span class="co">#&gt;        1      14440  -0.54365      7623 0.0558301</span>
@@ -696,56 +721,57 @@ Figure 1. Differential expression between factor knockdown and control HeLa cell
 <span class="co">#&gt;   seqinfo: 93 sequences from an unspecified genome; no seqlengths</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $YY2</span>
-<span class="co">#&gt; GRanges object with 15296 ranges and 12 metadata columns:</span>
-<span class="co">#&gt;         seqnames              ranges strand |     tx_id     tx_name     gene_id</span>
-<span class="co">#&gt;            &lt;Rle&gt;           &lt;IRanges&gt;  &lt;Rle&gt; | &lt;integer&gt; &lt;character&gt; &lt;character&gt;</span>
-<span class="co">#&gt;       1     chr1       795967-896166      + |        55  uc001aca.2      339451</span>
-<span class="co">#&gt;       2     chr1       796829-897028      + |        56  uc001acb.1      339451</span>
-<span class="co">#&gt;       3     chr1       797009-897208      + |        57  uc010nya.1      339451</span>
-<span class="co">#&gt;       4     chr1       797461-897660      + |        58  uc001acc.2      339451</span>
-<span class="co">#&gt;       5     chr1       797735-897934      + |        59  uc010nyb.1      339451</span>
-<span class="co">#&gt;     ...      ...                 ...    ... .       ...         ...         ...</span>
-<span class="co">#&gt;   20388     chrX 154134649-154234848      - |     78342  uc010nvi.1        2157</span>
-<span class="co">#&gt;   20389     chrX 154255016-154355215      - |     78343  uc011mzx.1        2157</span>
-<span class="co">#&gt;   20391     chrX 154299348-154399547      - |     78345  uc004fmz.2        4515</span>
-<span class="co">#&gt;   20392     chrX 154563787-154663986      - |     78347  uc004fnf.3        1193</span>
-<span class="co">#&gt;   20393     chrX 154563787-154663986      - |     78348  uc010nvj.1        1193</span>
-<span class="co">#&gt;                gene          tf        fc    pvalue     score score_rank</span>
-<span class="co">#&gt;         &lt;character&gt; &lt;character&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;  &lt;integer&gt;</span>
-<span class="co">#&gt;       1      KLHL17         YY2  -0.39191   0.30656 0.0869676      11139</span>
-<span class="co">#&gt;       2      KLHL17         YY2  -0.39191   0.30656 0.0900185      11002</span>
-<span class="co">#&gt;       3      KLHL17         YY2  -0.39191   0.30656 0.0906690      10973</span>
-<span class="co">#&gt;       4      KLHL17         YY2  -0.39191   0.30656 0.0923232      10902</span>
-<span class="co">#&gt;       5      KLHL17         YY2  -0.39191   0.30656 0.0933406      10865</span>
-<span class="co">#&gt;     ...         ...         ...       ...       ...       ...        ...</span>
-<span class="co">#&gt;   20388          F8         YY2   0.32501   0.12452 0.3079124       5339</span>
-<span class="co">#&gt;   20389          F8         YY2   0.32501   0.12452 0.5732370       1707</span>
-<span class="co">#&gt;   20391       MTCP1         YY2  -0.06521   0.65344 0.0832623      11837</span>
-<span class="co">#&gt;   20392       CLIC2         YY2   0.21019   0.35482 0.5570279       1908</span>
-<span class="co">#&gt;   20393       CLIC2         YY2   0.21019   0.35482 0.5570279       1908</span>
-<span class="co">#&gt;              stat stat_rank      rank</span>
-<span class="co">#&gt;         &lt;numeric&gt; &lt;integer&gt; &lt;numeric&gt;</span>
-<span class="co">#&gt;       1  -0.39191      2527  0.120308</span>
-<span class="co">#&gt;       2  -0.39191      2527  0.118829</span>
-<span class="co">#&gt;       3  -0.39191      2527  0.118515</span>
-<span class="co">#&gt;       4  -0.39191      2527  0.117749</span>
-<span class="co">#&gt;       5  -0.39191      2527  0.117349</span>
-<span class="co">#&gt;     ...       ...       ...       ...</span>
-<span class="co">#&gt;   20388   0.32501      3699 0.0844090</span>
-<span class="co">#&gt;   20389   0.32501      3699 0.0269875</span>
-<span class="co">#&gt;   20391  -0.06521     12032 0.6087286</span>
-<span class="co">#&gt;   20392   0.21019      6592 0.0537576</span>
-<span class="co">#&gt;   20393   0.21019      6592 0.0537576</span>
+<span class="co">#&gt; GRanges object with 15296 ranges and 13 metadata columns:</span>
+<span class="co">#&gt;         seqnames              ranges strand |     tx_id     tx_name gene_id</span>
+<span class="co">#&gt;            &lt;Rle&gt;           &lt;IRanges&gt;  &lt;Rle&gt; | &lt;integer&gt; &lt;character&gt;  &lt;list&gt;</span>
+<span class="co">#&gt;       1     chr1       795967-896166      + |        55  uc001aca.2  339451</span>
+<span class="co">#&gt;       2     chr1       796829-897028      + |        56  uc001acb.1  339451</span>
+<span class="co">#&gt;       3     chr1       797009-897208      + |        57  uc010nya.1  339451</span>
+<span class="co">#&gt;       4     chr1       797461-897660      + |        58  uc001acc.2  339451</span>
+<span class="co">#&gt;       5     chr1       797735-897934      + |        59  uc010nyb.1  339451</span>
+<span class="co">#&gt;     ...      ...                 ...    ... .       ...         ...     ...</span>
+<span class="co">#&gt;   20388     chrX 154134649-154234848      - |     78342  uc010nvi.1    2157</span>
+<span class="co">#&gt;   20389     chrX 154255016-154355215      - |     78343  uc011mzx.1    2157</span>
+<span class="co">#&gt;   20391     chrX 154299348-154399547      - |     78345  uc004fmz.2    4515</span>
+<span class="co">#&gt;   20392     chrX 154563787-154663986      - |     78347  uc004fnf.3    1193</span>
+<span class="co">#&gt;   20393     chrX 154563787-154663986      - |     78348  uc010nvj.1    1193</span>
+<span class="co">#&gt;                gene          tf      gene.1        fc    pvalue     score</span>
+<span class="co">#&gt;         &lt;character&gt; &lt;character&gt; &lt;character&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;</span>
+<span class="co">#&gt;       1      KLHL17         YY2      KLHL17  -0.39191   0.30656 0.0869676</span>
+<span class="co">#&gt;       2      KLHL17         YY2      KLHL17  -0.39191   0.30656 0.0900185</span>
+<span class="co">#&gt;       3      KLHL17         YY2      KLHL17  -0.39191   0.30656 0.0906690</span>
+<span class="co">#&gt;       4      KLHL17         YY2      KLHL17  -0.39191   0.30656 0.0923232</span>
+<span class="co">#&gt;       5      KLHL17         YY2      KLHL17  -0.39191   0.30656 0.0933406</span>
+<span class="co">#&gt;     ...         ...         ...         ...       ...       ...       ...</span>
+<span class="co">#&gt;   20388          F8         YY2          F8   0.32501   0.12452 0.3079124</span>
+<span class="co">#&gt;   20389          F8         YY2          F8   0.32501   0.12452 0.5732370</span>
+<span class="co">#&gt;   20391       MTCP1         YY2       MTCP1  -0.06521   0.65344 0.0832623</span>
+<span class="co">#&gt;   20392       CLIC2         YY2       CLIC2   0.21019   0.35482 0.5570279</span>
+<span class="co">#&gt;   20393       CLIC2         YY2       CLIC2   0.21019   0.35482 0.5570279</span>
+<span class="co">#&gt;         score_rank      stat stat_rank      rank</span>
+<span class="co">#&gt;          &lt;integer&gt; &lt;numeric&gt; &lt;integer&gt; &lt;numeric&gt;</span>
+<span class="co">#&gt;       1      11139  -0.39191      2527  0.120308</span>
+<span class="co">#&gt;       2      11002  -0.39191      2527  0.118829</span>
+<span class="co">#&gt;       3      10973  -0.39191      2527  0.118515</span>
+<span class="co">#&gt;       4      10902  -0.39191      2527  0.117749</span>
+<span class="co">#&gt;       5      10865  -0.39191      2527  0.117349</span>
+<span class="co">#&gt;     ...        ...       ...       ...       ...</span>
+<span class="co">#&gt;   20388       5339   0.32501      3699 0.0844090</span>
+<span class="co">#&gt;   20389       1707   0.32501      3699 0.0269875</span>
+<span class="co">#&gt;   20391      11837  -0.06521     12032 0.6087286</span>
+<span class="co">#&gt;   20392       1908   0.21019      6592 0.0537576</span>
+<span class="co">#&gt;   20393       1908   0.21019      6592 0.0537576</span>
 <span class="co">#&gt;   -------</span>
 <span class="co">#&gt;   seqinfo: 93 sequences from an unspecified genome; no seqlengths</span>
 
 <span class="co"># show added columns in the output</span>
 <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="fu">mcols</span><span class="op">(</span><span class="va">regions</span><span class="op">$</span><span class="va">YY1</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; [1] "tx_id"   "tx_name" "gene_id" "gene"    "tf"      "fc"      "pvalue"</span>
+<span class="co">#&gt; [1] "tx_id"   "tx_name" "gene_id" "gene"    "tf"      "gene"    "fc"     </span>
+<span class="co">#&gt; [8] "pvalue"</span>
 <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="fu">mcols</span><span class="op">(</span><span class="va">dt</span><span class="op">$</span><span class="va">YY1</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt;  [1] "tx_id"      "tx_name"    "gene_id"    "gene"       "tf"        </span>
-<span class="co">#&gt;  [6] "fc"         "pvalue"     "score"      "score_rank" "stat"      </span>
-<span class="co">#&gt; [11] "stat_rank"  "rank"</span>
+<span class="co">#&gt;  [6] "gene.1"     "fc"         "pvalue"     "score"      "score_rank"</span>
+<span class="co">#&gt; [11] "stat"       "stat_rank"  "rank"</span>
 
 <span class="co"># show information in the added columns</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">dt</span><span class="op">$</span><span class="va">YY1</span><span class="op">$</span><span class="va">score</span><span class="op">)</span>
@@ -800,33 +826,23 @@ Figure 2. Predicted functions of YY1 and YY2 on their specific targets. Bindings
 <span class="fu"><a href="https://purrr.tidyverse.org/reference/map2.html">map2</a></span><span class="op">(</span><span class="va">dt</span>, <span class="va">groups</span>,
      <span class="op">~</span><span class="fu"><a href="https://rdrr.io/pkg/target/man/test_predictions.html">test_predictions</a></span><span class="op">(</span><span class="va">.x</span><span class="op">$</span><span class="va">rank</span>,
                        group <span class="op">=</span> <span class="va">.y</span>,
-                       compare <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'Down'</span>, <span class="st">'Up'</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<p>Table 2. Testing for statistical significance of the regulated gene groups.</p>
-<table class="table">
-<thead><tr class="header">
-<th>Factor</th>
-<th>Statistic</th>
-<th>P.value</th>
-<th>Method</th>
-<th>Alternative</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td>YY1</td>
-<td>0.224</td>
-<td>2.2e-16</td>
-<td>Two-sample KS test</td>
-<td>two-sided</td>
-</tr>
-<tr class="even">
-<td>YY2</td>
-<td>0.149</td>
-<td>2.5e-15</td>
-<td>Two-sample KS test</td>
-<td>two-sided</td>
-</tr>
-</tbody>
-</table>
+                       compare <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'Down'</span>, <span class="st">'Up'</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
+<span class="co">#&gt; $YY1</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;  Two-sample Kolmogorov-Smirnov test</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; data:  x and y</span>
+<span class="co">#&gt; D = 0.78597, p-value &lt; 2.2e-16</span>
+<span class="co">#&gt; alternative hypothesis: two-sided</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; $YY2</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;  Two-sample Kolmogorov-Smirnov test</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; data:  x and y</span>
+<span class="co">#&gt; D = 0.40354, p-value = 1.075e-12</span>
+<span class="co">#&gt; alternative hypothesis: two-sided</span></code></pre></div>
 <p>To formally test these observations, we use the Kolmogorov-Smirnov (KS) test. The distribution of the two groups are compared for equality. If one lies one either side of the other then they must be drawn from different distributions.</p>
 <p>Here, we compared the up- and down-regulated functions for both factors (Table 2).</p>
 <p>In both cases, the distribution of the two groups were significantly different from one another.</p>
@@ -851,10 +867,14 @@ Figure 2. Predicted functions of YY1 and YY2 on their specific targets. Bindings
   <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_wider.html">pivot_wider</a></span><span class="op">(</span>names_from <span class="op">=</span> <span class="va">tf</span>,
               values_from <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">fc</span>, <span class="va">pvalue</span><span class="op">)</span><span class="op">)</span>
 
-<span class="co"># make regions using genome and expression data of both factors</span>
-<span class="va">both_regions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">inner_join</a></span><span class="op">(</span><span class="va">genome_df</span>, <span class="va">symbol_entrez</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">inner_join</a></span><span class="op">(</span><span class="va">both_express</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/pkg/GenomicRanges/man/makeGRangesFromDataFrame.html">makeGRangesFromDataFrame</a></span><span class="op">(</span>keep.extra.columns <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<span class="co"># match symbols between genome and expression objects</span>
+<span class="va">ind</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/match.html">match</a></span><span class="op">(</span><span class="va">genome</span><span class="op">$</span><span class="va">gene</span>, <span class="va">both_express</span><span class="op">$</span><span class="va">gene</span><span class="op">)</span>
+
+<span class="co"># subset genome by genes with expression info</span>
+<span class="va">both_regions</span> <span class="op">&lt;-</span> <span class="va">genome</span><span class="op">[</span><span class="va">genome</span><span class="op">$</span><span class="va">gene</span> <span class="op">%in%</span> <span class="va">both_express</span><span class="op">$</span><span class="va">gene</span><span class="op">]</span>
+
+<span class="co"># add expression info to gene info</span>
+<span class="fu">mcols</span><span class="op">(</span><span class="va">both_regions</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span><span class="op">(</span><span class="fu">mcols</span><span class="op">(</span><span class="va">both_regions</span><span class="op">)</span>, <span class="va">both_express</span><span class="op">[</span><span class="va">ind</span>,<span class="op">]</span><span class="op">)</span>  </code></pre></div>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># get associated peaks with both factors</span>
 <span class="va">common_ap</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/target/man/associated_peaks.html">associated_peaks</a></span><span class="op">(</span>peaks <span class="op">=</span> <span class="va">common_peaks</span>,
@@ -919,38 +939,24 @@ Figure 3. Predicted function of YY1 and YY2 on their shared targets. Shared bind
                  group <span class="op">=</span> <span class="va">common_groups</span>,
                  compare <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'Cooperative'</span>, <span class="st">'None'</span><span class="op">)</span>,
                  alternative <span class="op">=</span> <span class="st">'greater'</span><span class="op">)</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;  Two-sample Kolmogorov-Smirnov test</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; data:  x and y</span>
+<span class="co">#&gt; D^+ = 0.30253, p-value = 0.01034</span>
+<span class="co">#&gt; alternative hypothesis: the CDF of x lies above that of y</span>
 
 <span class="co"># test factors are more cooperative than competitive</span>
 <span class="fu"><a href="https://rdrr.io/pkg/target/man/test_predictions.html">test_predictions</a></span><span class="op">(</span><span class="va">common_dt</span><span class="op">$</span><span class="va">score_rank</span>,
                  group <span class="op">=</span> <span class="va">common_groups</span>,
                  compare <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'Cooperative'</span>, <span class="st">'Competitive'</span><span class="op">)</span>,
-                 alternative <span class="op">=</span> <span class="st">'greater'</span><span class="op">)</span></code></pre></div>
-<p>Table 3. Testing for statistical significance of combined functions of the two factors.</p>
-<table class="table">
-<thead><tr class="header">
-<th>Compare</th>
-<th>Statistic</th>
-<th>P.value</th>
-<th>Method</th>
-<th>Alternative</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td>Coop vs None</td>
-<td>0.168</td>
-<td>1.5e-30</td>
-<td>KS test</td>
-<td>CDF of x lies above that of y</td>
-</tr>
-<tr class="even">
-<td>Coop vs Comp</td>
-<td>0.151</td>
-<td>2.2e-16</td>
-<td>KS test</td>
-<td>CDF of x lies above that of y</td>
-</tr>
-</tbody>
-</table>
+                 alternative <span class="op">=</span> <span class="st">'greater'</span><span class="op">)</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;  Two-sample Kolmogorov-Smirnov test</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; data:  x and y</span>
+<span class="co">#&gt; D^+ = 0.29706, p-value = 0.01263</span>
+<span class="co">#&gt; alternative hypothesis: the CDF of x lies above that of y</span></code></pre></div>
 </div>
 <div id="summary" class="section level1">
 <h1 class="hasAnchor">
